@@ -2,11 +2,10 @@ import asyncio
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from aiogram.utils.markdown import md  # <-- вместо escape_md
 
 TOKEN = "7973360645:AAEg3oGRoz38TjuO2YTuK7z2PgF4xoNccvM"
 
-bot = Bot(token=TOKEN)
+bot = Bot(token=TOKEN, parse_mode=types.ParseMode.MARKDOWN)
 dp = Dispatcher()
 
 MANAGER_USERNAME = "@magic_support"
@@ -29,7 +28,7 @@ async def start(message: types.Message):
         "Ми створюємо витончені прикраси, які підкреслюють твою унікальність ✨\n\n"
         "Оберіть дію нижче 👇"
     )
-    await message.answer(md(text), parse_mode="Markdown", reply_markup=main_menu)
+    await message.answer(text, reply_markup=main_menu)
 
 
 @dp.message(F.text.contains("Наші колекції"))
@@ -41,7 +40,7 @@ async def collections(message: types.Message):
         "🌙 *Luna* — мінімалізм і сучасність\n\n"
         f"Щоб побачити фото — напишіть нашому менеджеру {MANAGER_USERNAME}"
     )
-    await message.answer(md(text), parse_mode="Markdown")
+    await message.answer(text)
 
 
 @dp.message(F.text.contains("Зв’язатися з менеджером"))
@@ -52,13 +51,13 @@ async def contact_manager(message: types.Message):
         "Instagram: @magia_prykras\n\n"
         "Або напишіть свій запит прямо сюди 💎"
     )
-    await message.answer(md(text), parse_mode="Markdown")
+    await message.answer(text)
 
 
 @dp.message(F.text.contains("Запис на консультацію"))
 async def start_consultation(message: types.Message):
     user_states[message.from_user.id] = {"step": "name"}
-    await message.answer(md("Чудово! 💫 Для запису на консультацію, спочатку напишіть ваше *ім’я*:"), parse_mode="Markdown")
+    await message.answer("Чудово! 💫 Для запису на консультацію, спочатку напишіть ваше *ім’я*:")
 
 
 @dp.message(F.text, F.from_user.id.in_(user_states.keys()))
@@ -69,15 +68,15 @@ async def consultation_steps(message: types.Message):
     if state["step"] == "name":
         state["name"] = message.text
         state["step"] = "date"
-        await message.answer(md("Дякую 🌸 Тепер вкажіть, будь ласка, *бажану дату та час консультації*:"), parse_mode="Markdown")
+        await message.answer("Дякую 🌸 Тепер вкажіть, будь ласка, *бажану дату та час консультації*:")
     elif state["step"] == "date":
         state["date"] = message.text
         state["step"] = "topic"
-        await message.answer(md("Добре 💎 Тепер коротко опишіть, *що саме вас цікавить* (наприклад: підбір каблучки, подарунок тощо):"), parse_mode="Markdown")
+        await message.answer("Добре 💎 Тепер коротко опишіть, *що саме вас цікавить* (наприклад: підбір каблучки, подарунок тощо):")
     elif state["step"] == "topic":
         state["topic"] = message.text
         state["step"] = "contact"
-        await message.answer(md("І нарешті — залиште, будь ласка, *ваш контакт* (телеграм або номер телефону):"), parse_mode="Markdown")
+        await message.answer("І нарешті — залиште, будь ласка, *ваш контакт* (телеграм або номер телефону):")
     elif state["step"] == "contact":
         state["contact"] = message.text
         name = state["name"]
@@ -96,7 +95,7 @@ async def consultation_steps(message: types.Message):
         )
 
         await bot.send_message(chat_id=message.chat.id, text="✅ Дякуємо! Ваша заявка відправлена менеджеру 💖\nОчікуйте на відповідь протягом дня.")
-        await bot.send_message(chat_id=message.chat.id, text=summary, parse_mode="Markdown")
+        await bot.send_message(chat_id=message.chat.id, text=summary)
         del user_states[user_id]
 
 
@@ -108,7 +107,7 @@ async def special_offers(message: types.Message):
         "Акція діє до кінця тижня ✨\n\n"
         f"Детальніше у менеджера {MANAGER_USERNAME}"
     )
-    await message.answer(md(text), parse_mode="Markdown")
+    await message.answer(text)
 
 
 @dp.message()
