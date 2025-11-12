@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from aiogram.utils.markdown import escape_md
+from aiogram.utils.markdown import md  # <-- вместо escape_md
 
 TOKEN = "7973360645:AAEg3oGRoz38TjuO2YTuK7z2PgF4xoNccvM"
 
@@ -29,7 +29,7 @@ async def start(message: types.Message):
         "Ми створюємо витончені прикраси, які підкреслюють твою унікальність ✨\n\n"
         "Оберіть дію нижче 👇"
     )
-    await message.answer(escape_md(text), parse_mode="Markdown", reply_markup=main_menu)
+    await message.answer(md(text), parse_mode="Markdown", reply_markup=main_menu)
 
 
 @dp.message(F.text.contains("Наші колекції"))
@@ -41,7 +41,7 @@ async def collections(message: types.Message):
         "🌙 *Luna* — мінімалізм і сучасність\n\n"
         f"Щоб побачити фото — напишіть нашому менеджеру {MANAGER_USERNAME}"
     )
-    await message.answer(escape_md(text), parse_mode="Markdown")
+    await message.answer(md(text), parse_mode="Markdown")
 
 
 @dp.message(F.text.contains("Зв’язатися з менеджером"))
@@ -52,13 +52,13 @@ async def contact_manager(message: types.Message):
         "Instagram: @magia_prykras\n\n"
         "Або напишіть свій запит прямо сюди 💎"
     )
-    await message.answer(escape_md(text), parse_mode="Markdown")
+    await message.answer(md(text), parse_mode="Markdown")
 
 
 @dp.message(F.text.contains("Запис на консультацію"))
 async def start_consultation(message: types.Message):
     user_states[message.from_user.id] = {"step": "name"}
-    await message.answer(escape_md("Чудово! 💫 Для запису на консультацію, спочатку напишіть ваше *ім’я*:"), parse_mode="Markdown")
+    await message.answer(md("Чудово! 💫 Для запису на консультацію, спочатку напишіть ваше *ім’я*:"), parse_mode="Markdown")
 
 
 @dp.message(F.text, F.from_user.id.in_(user_states.keys()))
@@ -69,22 +69,22 @@ async def consultation_steps(message: types.Message):
     if state["step"] == "name":
         state["name"] = message.text
         state["step"] = "date"
-        await message.answer(escape_md("Дякую 🌸 Тепер вкажіть, будь ласка, *бажану дату та час консультації*:"), parse_mode="Markdown")
+        await message.answer(md("Дякую 🌸 Тепер вкажіть, будь ласка, *бажану дату та час консультації*:"), parse_mode="Markdown")
     elif state["step"] == "date":
         state["date"] = message.text
         state["step"] = "topic"
-        await message.answer(escape_md("Добре 💎 Тепер коротко опишіть, *що саме вас цікавить* (наприклад: підбір каблучки, подарунок тощо):"), parse_mode="Markdown")
+        await message.answer(md("Добре 💎 Тепер коротко опишіть, *що саме вас цікавить* (наприклад: підбір каблучки, подарунок тощо):"), parse_mode="Markdown")
     elif state["step"] == "topic":
         state["topic"] = message.text
         state["step"] = "contact"
-        await message.answer(escape_md("І нарешті — залиште, будь ласка, *ваш контакт* (телеграм або номер телефону):"), parse_mode="Markdown")
+        await message.answer(md("І нарешті — залиште, будь ласка, *ваш контакт* (телеграм або номер телефону):"), parse_mode="Markdown")
     elif state["step"] == "contact":
         state["contact"] = message.text
-        name = escape_md(state["name"])
-        date = escape_md(state["date"])
-        topic = escape_md(state["topic"])
-        contact = escape_md(state["contact"])
-        username = escape_md(message.from_user.username or 'без_нікнейму')
+        name = state["name"]
+        date = state["date"]
+        topic = state["topic"]
+        contact = state["contact"]
+        username = message.from_user.username or 'без_нікнейму'
 
         summary = (
             f"📋 *Нова заявка на консультацію!*\n\n"
@@ -97,7 +97,6 @@ async def consultation_steps(message: types.Message):
 
         await bot.send_message(chat_id=message.chat.id, text="✅ Дякуємо! Ваша заявка відправлена менеджеру 💖\nОчікуйте на відповідь протягом дня.")
         await bot.send_message(chat_id=message.chat.id, text=summary, parse_mode="Markdown")
-
         del user_states[user_id]
 
 
@@ -109,7 +108,7 @@ async def special_offers(message: types.Message):
         "Акція діє до кінця тижня ✨\n\n"
         f"Детальніше у менеджера {MANAGER_USERNAME}"
     )
-    await message.answer(escape_md(text), parse_mode="Markdown")
+    await message.answer(md(text), parse_mode="Markdown")
 
 
 @dp.message()
@@ -119,11 +118,7 @@ async def fallback(message: types.Message):
 
 async def main():
     print("✅ Бот «Магія прикрас» запущено!")
-    try:
-        await dp.start_polling(bot)
-    except Exception as e:
-        print(f"❌ Помилка: {e}")
-
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
     asyncio.run(main())
