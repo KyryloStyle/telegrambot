@@ -5,7 +5,7 @@ from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.enums import ParseMode
 
-TOKEN = "твой_токен"
+TOKEN = "7973360645:AAEg3oGRoz38TjuO2YTuK7z2PgF4xoNccvM"
 
 bot = Bot(
     token=TOKEN,
