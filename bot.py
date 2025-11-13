@@ -1,12 +1,23 @@
-from aiogram.client.default import DefaultBotProperties
+import os
 import asyncio
 from aiogram import Bot, Dispatcher, types, F
+from aiogram.client.default import DefaultBotProperties
 from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.enums import ParseMode
 
-# Не забудь вернуть переменную окружения, если деплоишь!
+# --- НАЛАШТУВАННЯ ТОКЕНА ---
+# Бот спробує взяти токен із налаштувань сервера (Render).
+# Якщо не знайде — візьме той, що в лапках (для тестів на комп'ютері).
 TOKEN = "7973360645:AAEg3oGRoz38TjuO2YTuK7z2PgF4xoNccvM"
+
+# Якщо забув додати змінну на Render, бот впаде з помилкою, щоб ти це помітив.
+if not TOKEN:
+    # Тимчасовий варіант, якщо тестуєш локально, можеш розкоментувати рядок нижче,
+    # АЛЕ НЕ ЗАЛИШАЙ ЙОГО ДЛЯ RENDER!
+    # TOKEN = "ТВІЙ_ТОКЕН_ВСТАВ_СЮДИ"
+    raise ValueError(
+        "❌ Помилка: Не знайдено змінну BOT_TOKEN! Додай її в Environment Variables на Render.")
 
 bot = Bot(
     token=TOKEN,
@@ -20,6 +31,7 @@ MANAGER_USERNAME = "@magic_support"
 builder = ReplyKeyboardBuilder()
 builder.button(text="📞 Зв’язатися з менеджером")
 builder.button(text="🕓 Запис на консультацію")
+# Ти прибрав кнопку адреси в цьому коді, тому я залишаю як є:
 builder.adjust(2)
 main_menu = builder.as_markup(resize_keyboard=True)
 
@@ -113,7 +125,12 @@ async def fallback(message: types.Message):
 
 async def main():
     print("✅ Бот «Магія прикрас» запущено!")
-    await dp.delete_webhook(drop_pending_updates=True)
+
+    # --- ВИПРАВЛЕННЯ ТУТ ---
+    # Було: await dp.delete_webhook(...) -> Помилка
+    # Стало: await bot.delete_webhook(...)
+    await bot.delete_webhook(drop_pending_updates=True)
+
     await dp.start_polling(bot)
 
 
