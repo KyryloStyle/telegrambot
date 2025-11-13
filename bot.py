@@ -1,3 +1,4 @@
+from aiogram.client.default import DefaultBotProperties
 import asyncio
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
@@ -6,7 +7,12 @@ from aiogram.enums import ParseMode  # <-- добавили это
 
 TOKEN = "7973360645:AAEg3oGRoz38TjuO2YTuK7z2PgF4xoNccvM"
 
-bot = Bot(token=TOKEN, parse_mode=ParseMode.MARKDOWN)  # <-- теперь правильно
+
+bot = Bot(
+    token=TOKEN,
+    default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN)
+)
+
 dp = Dispatcher()
 
 MANAGER_USERNAME = "@magic_support"
