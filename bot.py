@@ -3,10 +3,9 @@ import asyncio
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from aiogram.enums import ParseMode  # <-- добавили это
+from aiogram.enums import ParseMode
 
-TOKEN = "7973360645:AAEg3oGRoz38TjuO2YTuK7z2PgF4xoNccvM"
-
+TOKEN = "твой_токен"
 
 bot = Bot(
     token=TOKEN,
@@ -18,11 +17,10 @@ dp = Dispatcher()
 MANAGER_USERNAME = "@magic_support"
 
 builder = ReplyKeyboardBuilder()
-builder.button(text="💎 Наші колекції")
 builder.button(text="📞 Зв’язатися з менеджером")
 builder.button(text="🕓 Запис на консультацію")
-builder.button(text="🎁 Спеціальні пропозиції")
-builder.adjust(2, 2)
+builder.button(text="📍 Адреса магазину")  # ✅ новая кнопка
+builder.adjust(2, 1)
 main_menu = builder.as_markup(resize_keyboard=True)
 
 user_states = {}
@@ -36,18 +34,6 @@ async def start(message: types.Message):
         "Оберіть дію нижче 👇"
     )
     await message.answer(text, reply_markup=main_menu)
-
-
-@dp.message(F.text.contains("Наші колекції"))
-async def collections(message: types.Message):
-    text = (
-        "Наші найпопулярніші колекції:\n"
-        "✨ *Aurora* — класика з блиском\n"
-        "🌸 *Blossom* — весняна ніжність\n"
-        "🌙 *Luna* — мінімалізм і сучасність\n\n"
-        f"Щоб побачити фото — напишіть нашому менеджеру {MANAGER_USERNAME}"
-    )
-    await message.answer(text)
 
 
 @dp.message(F.text.contains("Зв’язатися з менеджером"))
@@ -117,13 +103,14 @@ async def consultation_steps(message: types.Message):
         del user_states[user_id]
 
 
-@dp.message(F.text.contains("Спеціальні пропозиції"))
-async def special_offers(message: types.Message):
+# ✅ Новая команда — адрес магазина
+@dp.message(F.text.contains("Адреса магазину"))
+async def shop_address(message: types.Message):
     text = (
-        "🎁 *Спеціальна пропозиція тижня!*\n\n"
-        "Знижка -20% на колекцію *Luna* 🌙\n"
-        "Акція діє до кінця тижня ✨\n\n"
-        f"Детальніше у менеджера {MANAGER_USERNAME}"
+        "🏠 *Адреса нашого магазину:*\n\n"
+        "📍 м. Київ, вул. Хрещатик, 22\n"
+        "🕓 Графік роботи: Пн–Нд, 10:00–20:00\n\n"
+        f"Зв’яжіться з нами: {MANAGER_USERNAME}"
     )
     await message.answer(text)
 
